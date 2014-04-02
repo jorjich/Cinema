@@ -4,6 +4,27 @@ import os
 
 
 def create_tables(cursor):
+    cursor.execute('''CREATE TABLE IF NOT EXISTS movies
+                        (movies_id INTEGER PRIMARY KEY,
+                        name TEXT,
+                        rating REAL)''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS projections
+                        (proj_id INTEGER PRIMARY KEY,
+                        movie_id INTEGER,
+                        type TEXT,
+                        date TEXT,
+                        time TEXT,
+                        FOREIGN KEY(movie_id) REFERENCES movies(movies_id))''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS reservations
+                        (res_id INTEGER PRIMARY KEY,
+                        username TEXT,
+                        projection_id INTEGER,
+                        row INTEGER,
+                        col INTEGER,
+                        FOREIGN KEY(projection_id) REFERENCES projections(proj_id) )''')
+
 
 
 def insert_into_movies(item, cursor):
@@ -96,6 +117,7 @@ class CinemaTest(unittest.TestCase):
         conn.close
 
     def test_show_movies(self):
+        expect = [""]
 
     def tearDown(self):
         os.remove("test_cinema.db")
