@@ -77,8 +77,8 @@ class Cinema():
         print("Available seats (marked with a dot):")
 
         taken_seats = cursor.execute('''SELECT row, col
-                                  FROM reservations
-                                  WHERE res_id = ?''', (projection_id))
+                                        FROM reservations
+                                        WHERE projection_id = ?''', (projection_id))
 
         # for row in taken_seats:
         #     print(row)
