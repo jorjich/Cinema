@@ -50,7 +50,67 @@ class Cinema():
                     print("[" + str(row[0]) + "] - " + row[1] + " (" + row[2] + ")")
 
 
-    # def make_reservaton(self):
+    def make_reservaton(self):
+        m = Cinema()
+        conn = sqlite3.connect("cinema_database.db")
+        cursor = conn.cursor()
+
+        name = input("Step 1 (User): Choose name>")
+        number_of_tickets = input("Step 1 (User): Choose number of tickets>")
+        print("\nCurrent movies:")
+
+
+        m.show_movies()
+        print()
+
+        movie_id = input("Step 2 (Movie): Choose a movie>")
+        movie_name = cursor.execute('''SELECT name
+                                       FROM movies
+                                       WHERE movies_id = ?''', (movie_id))
+        for row in movie_name:
+            print("Projection for movie \'" + row[0] + "\':")
+
+        m.show_movies_projections(movie_id)
+        print()
+
+        projection_id = input("Step 3 (Projection): Choose a projection>")
+        print("Available seats (marked with a dot):")
+
+        taken_seats = cursor.execute('''SELECT row, col
+                                  FROM reservations
+                                  WHERE res_id = ?''', (projection_id))
+
+        # for row in taken_seats:
+        #     print(row)
+
+        hall = [[ ".  " for x in range(11)] for x in range(11)]
+        for i in range(0, 11):
+            if i < 10:
+                hall[i][0] = str(i) + "   "
+            else:
+                hall[i][0] = str(i) + "  "
+        for i in range(0, 11):
+            hall[0][i] = str(i) + "  "
+
+        for seat in taken_seats:
+            row = int(seat[0])
+            col = int(seat[1])
+            hall[row][col] = "X  "
+
+        for i,row in enumerate(hall):
+            print(''.join(row))
+
+        # for i,row in enumerate(range(0, 10)):
+        #     for col in enumerate(range(0, 10)):
+        #         hall[row][col] = '.'
+        #         print(hall[col])
+        #     print(hall[row])
+
+
+
+
+
+
 
     def loop(self):
         c = Cinema()
@@ -61,15 +121,20 @@ class Cinema():
             if cmd[0] == 'sh':
                 c.show_movies()
                 continue
-            if cmd[0] == 'sp':
+            elif cmd[0] == 'sp':
                 if (len(cmd)>2):
                     c.show_movies_projections(cmd[1], cmd[2])
                     continue
                 else:
                     c.show_movies_projections(cmd[1])
                     continue
-            if cmd[0] == 'exit':
+            elif cmd[0] == 'mr':
+                c.make_reservaton()
+                continue
+            elif cmd[0] == 'exit':
                 break
+            else:
+                continue
 
 def main():
     new = Cinema()
