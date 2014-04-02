@@ -1,7 +1,7 @@
-import magic_reservation_system
 import unittest
 import os
 import sqlite3
+import magic_reservation_system
 
 
 def create_tables(cursor):
@@ -122,9 +122,9 @@ class CinemaTest(unittest.TestCase):
 
     def test_show_movies(self):
 
-        self.cinema = magic_reservation_system.Cinema()
+        #self.cinema = magic_reservation_system.Cinema()
         expect = ["{1} - 21", "{2} - 47 Ronin"]
-        self.assertEqual(expect, self.cinema.show_movies())
+        self.assertEqual(expect, magic_reservation_system.show_movies("test_cinema.db"))
 
     def tearDown(self):
 
