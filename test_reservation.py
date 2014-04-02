@@ -1,9 +1,11 @@
-from magic_reservation_system import show_movies, show_movies_projections,make_reservaton
+import magic_reservation_system
 import unittest
 import os
+import sqlite3
 
 
 def create_tables(cursor):
+
     cursor.execute('''CREATE TABLE IF NOT EXISTS movies
                         (movies_id INTEGER PRIMARY KEY,
                         name TEXT,
@@ -35,6 +37,7 @@ def insert_into_movies(item, cursor):
     query = '''INSERT INTO movies(movies_id, name, rating) VALUES(?, ?, ?) '''
     cursor.execute(query, (movies_id, name, rating))
 
+
 def insert_into_reservations(item, cursor):
     res_id = item["res_id"]
     username = item["username"]
@@ -45,6 +48,7 @@ def insert_into_reservations(item, cursor):
     query = '''INSERT INTO reservations(res_id, username, projection_id, row, col) VALUES(?, ?, ?, ?, ?) '''
     cursor.execute(query, (res_id, username, projection_id, row, col))
 
+
 def insert_into_projections(item, cursor):
     proj_id = item["proj_id"]
     movie_id = item["movie_id"]
@@ -54,6 +58,7 @@ def insert_into_projections(item, cursor):
 
     query = '''INSERT INTO projections(proj_id, movie_id, type, date, time) VALUES(?, ?, ?, ?, ?) '''
     cursor.execute(query, (proj_id, movie_id, type, date, time))
+
 
 movies = [{
     "movies_id": 1,
@@ -91,15 +96,14 @@ projections = [{
     "type": "4D",
     "date": "26-12-2014",
     "time": "18:00"
-    }
 }]
-
 
 
 class CinemaTest(unittest.TestCase):
 
     def setUp(self):
-        conn = sqlite3.cursor("test_cinema.db")
+
+        conn = sqlite3.connect("test_cinema.db")
         c = conn.cursor()
 
         create_tables(c)
@@ -117,9 +121,13 @@ class CinemaTest(unittest.TestCase):
         conn.close
 
     def test_show_movies(self):
-        expect = [""]
+
+        self.cinema = magic_reservation_system.Cinema()
+        expect = ["{1} - 21", "{2} - 47 Ronin"]
+        self.assertEqual(expect, self.cinema.show_movies())
 
     def tearDown(self):
+
         os.remove("test_cinema.db")
 
 
