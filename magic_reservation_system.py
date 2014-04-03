@@ -1,4 +1,5 @@
 import sqlite3
+import re
 
 
 class Cinema():
@@ -80,9 +81,6 @@ class Cinema():
                                         FROM reservations
                                         WHERE projection_id = ?''', (projection_id))
 
-        # for row in taken_seats:
-        #     print(row)
-
         hall = [[ ".  " for x in range(11)] for x in range(11)]
         for i in range(0, 11):
             if i < 10:
@@ -100,15 +98,26 @@ class Cinema():
         for i,row in enumerate(hall):
             print(''.join(row))
 
-        # for i,row in enumerate(range(0, 10)):
-        #     for col in enumerate(range(0, 10)):
-        #         hall[row][col] = '.'
-        #         print(hall[col])
-        #     print(hall[row])
+        numbers_like_strings = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+        counter = 0
+        while int(number_of_tickets)> counter:
+            choose_seat = (input("Step 4 (Seats): Choose seat %d>"%(counter+1)))
+            users_choice = re.findall(r'\d+', choose_seat)
+            row_choice = int(users_choice[0])
+            col_choice = int(users_choice[1])
+            if(row_choice<11 and row_choice>0 and col_choice<11 and col_choice>0):
+                if (hall[row_choice][col_choice] == ".  "):
+                    print("pishem v bazata")
+                    new_seat = cursor.execute('''INSERT INTO reservations(username, projection_id, row, col) VALUES(?, ?, ?, ?) ''', (name, projection_id, seat_row, seat_col))
 
+                    counter += 1
+                else:
+                    print("The plase is taken. Try again!")
+            else:
+                print("The place is incorrect! Try again!")
 
-
-
+        conn.commit()
+        conn.close()
 
 
 
@@ -118,10 +127,10 @@ class Cinema():
         while True:
             command = input(">")
             cmd = command.split()
-            if cmd[0] == 'sh':
+            if cmd[0] == 'show_movies':
                 c.show_movies()
                 continue
-            elif cmd[0] == 'sp':
+            elif cmd[0] == 'show_movies_projections':
                 if (len(cmd)>2):
                     c.show_movies_projections(cmd[1], cmd[2])
                     continue
